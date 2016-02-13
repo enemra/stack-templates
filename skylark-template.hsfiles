@@ -1,0 +1,148 @@
+{-# START_FILE skylark-{{name}}.cabal #-}
+name:                  skylark-{{name}}
+version:               0.1.0
+synopsis:              Initial skylark project template
+description:           Please see README.md
+homepage:              https://github.com/swift-nav/skylark-{{name}}
+license:               BSD3
+license-file:          LICENSE
+author:                Swift Navigation Inc.
+maintainer:            {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+copyright:             {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
+category:              {{category}}{{^category}}Network{{/category}}
+build-type:            Simple
+cabal-version:         >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Network.Skylark.Lib
+-- other-modules:
+  ghc-options:         -Wall -O2
+  build-depends:       base >= 4.7 && < 5
+                     , basic-prelude
+                     , skylark-core
+  default-language:    Haskell2010
+  default-extensions:  NoImplicitPrelude
+                       OverloadedStrings
+                       RecordWildCards
+                       FlexibleContexts
+                       ConstraintKinds
+
+executable skylark-{{name}}-exe
+  hs-source-dirs:      main
+  main-is:             main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall -O2
+  build-depends:       base
+                     , basic-prelude
+                     , skylark-{{name}}
+  default-language:    Haskell2010
+  default-extensions:  NoImplicitPrelude
+                       OverloadedStrings
+
+test-suite skylark-{{name}}-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  other-modules:       Test.Network.Skylark.Broker
+                     , Test.Network.Skylark.Broker.Conf
+                     , Test.Network.Skylark.Broker.Elections
+                     , Test.Network.Skylark.Broker.Test
+  build-depends:       base
+                     , basic-prelude
+                     , skylark-{{name}}
+                     , tasty
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  default-language:    Haskell2010
+  default-extensions:  NoImplicitPrelude
+                       OverloadedStrings
+                       RecordWildCards
+
+source-repository head
+  type:                git
+  location:            https://github.com/swift-nav/skylark-{{name}}
+
+{-# START_FILE Setup.hs #-}
+import Distribution.Simple
+main = defaultMain
+
+{-# START_FILE test/test.hs #-}
+-- |
+-- Module:      test
+-- Copyright:   {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
+-- License:     BSD3
+-- Maintainer:  {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+--
+-- Test module.
+
+import BasicPrelude
+import Test.Tasty
+
+tests :: TestTree
+tests = testGroup "Tests"
+  [
+  ]
+
+main :: IO ()
+main = defaultMain tests
+
+{-# START_FILE src/Network/Skylark/Lib.hs #-}
+-- |
+-- Module:      Network.Skylark.Lib
+-- Copyright:   {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
+-- License:     BSD3
+-- Maintainer:  {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+--
+-- Lib module.
+
+module Lib
+  ( lib
+  ) where
+
+lib :: IO ()
+lib = putStrLn "lib"
+
+{-# START_FILE main/main.hs #-}
+-- |
+-- Module:      main
+-- Copyright:   {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
+-- License:     BSD3
+-- Maintainer:  {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+--
+-- Main module.
+
+import Network.Skylark.Lib
+
+main :: IO ()
+main = lib
+
+{-# START_FILE LICENSE #-}
+Copyright {{author-name}}{{^author-name}}Author name here{{/author-name}} (c) 2016
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of {{author-name}}{{^author-name}}Author name here{{/author-name}} nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
