@@ -9,7 +9,7 @@ license-file:          LICENSE
 author:                Swift Navigation Inc.
 maintainer:            {{author-email}}{{^author-email}}example@example.com{{/author-email}}
 copyright:             {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
-category:              {{category}}{{^category}}Network{{/category}}
+category:              Network
 build-type:            Simple
 cabal-version:         >=1.10
 
@@ -146,3 +146,96 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+{-# START_FILE .dir-locals.el #-}
+((haskell-mode
+  . ((haskell-process-type . ghci)
+     (haskell-process-path-ghci . "stack")
+     (haskell-process-args-ghci . ("ghci"))))
+ (haskell-cabal-mode
+  . ((haskell-process-type . ghci)
+     (haskell-process-path-ghci . "stack")
+     (haskell-process-args-ghci . ("ghci")))))
+
+{-# START_FILE .gitignore #-}
+*.o
+*.hi
+*.chi
+*.chs.h
+*~
+*.*~
+.hsenv
+.stack-work/
+dist
+
+{-# START_FILE .travis.yml #-}
+sudo: false
+
+language: c
+
+addons:
+  apt:
+    packages:
+    - libgmp-dev
+
+cache:
+  apt: true
+  directories:
+    - $HOME/.stack/
+
+before_install:
+  # Install stack
+  - export PATH=~/.local/bin:$PATH
+  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+install:
+  - stack update
+  - stack setup
+  - stack install hlint
+  - stack build skylark-{{name}} --only-dependencies
+
+script:
+  - ./lint.sh
+  - stack build skylark-{{name}} --test
+
+{-# START_FILE lint.sh #-}
+#!/usr/bin/env bash
+
+set -e
+
+for dir in main src test/Test
+do
+    hlint $dir
+done
+
+{-# START_FILE stylish.sh #-}
+#!/usr/bin/env bash
+
+set -e
+
+for dir in src test
+do
+    find $dir -name "*.hs" | xargs stylish-haskell -i
+done
+
+{-# START_FILE .stylish-haskell.yaml #-}
+steps:
+  - imports:
+      align: file
+
+  - language_pragmas:
+      style: vertical
+      remove_redundant: true
+
+  - records: {}
+
+  - trailing_whitespace: {}
+
+columns: 94
+
+language_extensions:
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - FlexibleContexts
+  - ConstraintKinds
+  - RecordWildCards
