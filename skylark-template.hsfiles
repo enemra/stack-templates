@@ -12,6 +12,8 @@ copyright:             {{copyright}}{{^copyright}}2016 Author Here{{/copyright}}
 category:              Network
 build-type:            Simple
 cabal-version:         >=1.10
+data-files:            conf/info.yaml
+                     , conf/dev.yaml
 
 library
   hs-source-dirs:      src
@@ -64,6 +66,14 @@ source-repository head
 {-# START_FILE Setup.hs #-}
 import Distribution.Simple
 main = defaultMain
+
+{-# START_FILE conf/info.yaml #-}
+---
+  tag: sample
+
+{-# START_FILE conf/dev.yaml #-}
+---
+{}
 
 {-# START_FILE test/test.hs #-}
 -- |
@@ -195,28 +205,8 @@ install:
   - stack build skylark-{{name}} --only-dependencies
 
 script:
-  - ./lint.sh
+  - make lint
   - stack build skylark-{{name}} --test
-
-{-# START_FILE lint.sh #-}
-#!/usr/bin/env bash
-
-set -e
-
-for dir in main src test/Test
-do
-    hlint $dir
-done
-
-{-# START_FILE stylish.sh #-}
-#!/usr/bin/env bash
-
-set -e
-
-for dir in src test
-do
-    find $dir -name "*.hs" | xargs stylish-haskell -i
-done
 
 {-# START_FILE .stylish-haskell.yaml #-}
 steps:
@@ -239,3 +229,25 @@ language_extensions:
   - FlexibleContexts
   - ConstraintKinds
   - RecordWildCards
+
+{-# START_FILE Makefile #-}
+.PHONY: all test install clean lint stylish
+
+all: lint stylish test install
+
+test:
+	stack build skylark-{{name}} --test
+
+install:
+	stack build skylark-{{name}} --copy-bins
+
+clean:
+	stack clean
+
+lint:
+	hlint src
+	hlint test/Test
+
+stylish:
+	find src -name "*.hs" -type f -execdir stylish-haskell -i "{}" \;
+	find test/Test -name "*.hs" -type f -execdir stylish-haskell -i "{}" \;
